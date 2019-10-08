@@ -5,6 +5,7 @@
 #include <cstring>
 #include "permutations.cpp"
 using namespace std;
+#include <iomanip>
 
 
 string readFile(string filename) {
@@ -58,7 +59,7 @@ string string_from_vector(const vector<string> &pieces) {
 map<string, map<string,int>> countOccurrences(map<string, map<string,int>> counter, string content, int k, vector<string> alphabet) {
     char content_ch_array[content.length() + 1];
     strcpy(content_ch_array, content.c_str());
-    //cout << content << '\n';
+
     for(int i = 0; i < content.length()-k+1; ++i) {
 
         vector<string> seq;
@@ -67,29 +68,57 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
             seq.push_back(s);
         }
 
-        // for(int j = 0; j < alphabet.size(); ++j) {
-        //     if (alphabet[j] == seq.back()) {
-        //         string string_seq = string_from_vector(seq);
-        //         //cout << string_seq.substr(0,k-1)<< '\n';
-        //         counter.find(string_seq.substr(0,k-2))->second[j]++;
-        //     }
-        // }
         string string_seq = string_from_vector(seq);
-
         string s2(1,string_seq.back());
-        cout << s2 << endl;
 
         counter[string_seq.substr(0,k-1)][s2]++;
-        cout << counter[string_seq.substr(0,k-1)][s2] << endl;
-
-        // local_freq.find(s2)->second++;
-        // counter[string_seq.substr(0,k-1)] = local_freq;
-        //cout << seq << '\n';
+        //cout << counter[string_seq.substr(0,k-1)][s2] << endl;
 
     }
 
     return counter;
 }
+
+
+void printCounterDouble(map<string, map<string,float>> counter) {
+    cout.precision(2);
+
+    for(auto& x : counter) {
+        cout << x.first << " - ";
+        cout << "[ ";
+        int cnt = 0;
+        for(auto&& y: x.second) {
+            cnt++;
+	        cout << y.first << ":" << (float) y.second;
+            if(cnt != x.second.size()) {
+                cout << "   \t";
+            } else {
+                cout << " ";
+            }
+        }
+        cout << "]\n";
+    }
+}
+
+map<string, map<string,float>> calculateProbabilities(map<string, map<string,int>> counter, int smoothing)  {
+    map<string, map<string,float>> probabilities;
+    for(auto& seq: counter) {
+        int sum = 0;
+        for(auto&& freq: seq.second) {
+            sum+=freq.second;
+        }
+        for(auto&& freq: seq.second) {
+            float x = freq.second+smoothing;
+            float y = sum+smoothing*seq.second.size();
+            probabilities[seq.first][freq.first] = (float)x/(float)y;
+        }
+    }
+	
+    printCounterDouble(probabilities);
+
+    return probabilities;
+}
+
 
 
 void printCounter(map<string, map<string,int>> counter) {
@@ -112,7 +141,7 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
         for (int j = 0; j < k; ++j) {
             freqs[options.at(j)]=0;
         }
-        cout << "-> " << permuts.at(i) << '\n';
+        //cout << "-> " << permuts.at(i) << '\n';
 
         counter[permuts[i].substr(0,k-1)] = freqs;
 
@@ -125,9 +154,13 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
 
 int main(int argc, char *argv[]) 
 {
+    setw(2);
+    setprecision(5);
+    
+
     char alphabet[] = "ACTG";
     int k = atoi(argv[2]);
-    int alpha = atoi(argv[3]);
+    int smoothing = atoi(argv[3]);
     string filename = argv[1];
 
 
@@ -144,14 +177,13 @@ int main(int argc, char *argv[])
     map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
     printCounter(counter);
 
-    char ab[] = "ATCG";
-    allLexicographic(ab);
+    //char ab[] = "ATCG";
+    //allLexicographic(ab);
 
     counter = countOccurrences(counter, fileContent, k, options);
-    cout << "-----" << endl;
 
-    printCounter(counter);
-
+    //printCounter(counter);
+    calculateProbabilities(counter,smoothing);
 
 
     return 0;
