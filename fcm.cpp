@@ -7,6 +7,7 @@
 using namespace std;
 #include <iomanip>
 
+float modelEntropy = 0.0;
 
 string readFile(string filename) {
     string content = "";
@@ -34,7 +35,7 @@ vector<string> combination_with_repetiton(int n, int p, const vector<string>& al
                 if (v[i] > n){ 
                     v[i + 1] += 1; 
                     for (int k = i; k >= 0; --k){ 
-                            v[k] = v[i + 1]; 
+                        v[k] = v[i + 1]; 
                     } 
                 } 
             } 
@@ -72,8 +73,6 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
         string s2(1,string_seq.back());
 
         counter[string_seq.substr(0,k-1)][s2]++;
-        //cout << counter[string_seq.substr(0,k-1)][s2] << endl;
-
     }
 
     return counter;
@@ -102,19 +101,38 @@ void printCounterDouble(map<string, map<string,float>> counter) {
 
 map<string, map<string,float>> calculateProbabilities(map<string, map<string,int>> counter, int smoothing)  {
     map<string, map<string,float>> probabilities;
+    int overallSum = 0;
+
+    for(auto& seq: counter) {
+        for(auto&& freq: seq.second) {
+            overallSum+=freq.second;
+        }
+    }
+
     for(auto& seq: counter) {
         int sum = 0;
+        float Hc = 0.0;
         for(auto&& freq: seq.second) {
             sum+=freq.second;
         }
         for(auto&& freq: seq.second) {
             float x = freq.second+smoothing;
             float y = sum+smoothing*seq.second.size();
-            probabilities[seq.first][freq.first] = (float)x/(float)y;
+            float prob = (float)x/(float)y;
+            float bits = -log10(prob)*prob;
+            probabilities[seq.first][freq.first] = prob;
+            Hc+=bits;
         }
+        cout << seq.first << " - Local entropy: " << Hc << endl;
+        float localProb = (float) sum/ (float) overallSum;
+        cout << seq.first << " - Local probability: " << localProb << endl;
+
+        modelEntropy+=localProb*Hc;
+
     }
 	
-    printCounterDouble(probabilities);
+    //printCounterDouble(probabilities);
+
 
     return probabilities;
 }
@@ -152,10 +170,14 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
 
 
 
+
+
 int main(int argc, char *argv[]) 
 {
     setw(2);
     setprecision(5);
+    cout.precision(2);
+
     
 
     char alphabet[] = "ACTG";
@@ -175,15 +197,13 @@ int main(int argc, char *argv[])
     combination_with_repetiton(4,3,options);
 
     map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
-    printCounter(counter);
-
-    //char ab[] = "ATCG";
-    //allLexicographic(ab);
 
     counter = countOccurrences(counter, fileContent, k, options);
 
-    //printCounter(counter);
-    calculateProbabilities(counter,smoothing);
+    cout << "Probabilities:" << endl;
+    printCounterDouble(calculateProbabilities(counter,smoothing));
+    cout << "Model entropy: " << (float) modelEntropy << endl;
+
 
 
     return 0;
