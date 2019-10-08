@@ -4,8 +4,9 @@
 #include <map>
 #include <cstring>
 #include "permutations.cpp"
-using namespace std;
 #include <iomanip>
+
+using namespace std;
 
 float modelEntropy = 0.0;
 
@@ -25,31 +26,6 @@ string readFile(string filename) {
     return content;
 }
 
-
-vector<string> combination_with_repetiton(int n, int p, const vector<string>& alphabet){ 
-        n--; 
-        vector<int> v(p+1, 0);
-        vector<string> allCombinations;
-        while (true){ 
-            for (int i = 0; i < p; ++i){
-                if (v[i] > n){ 
-                    v[i + 1] += 1; 
-                    for (int k = i; k >= 0; --k){ 
-                        v[k] = v[i + 1]; 
-                    } 
-                } 
-            } 
-
-            if (v[p] > 0) {break;}
-            string comb = "";
-            for (size_t i = 0; i < n; ++i) 
-                comb.append(alphabet[v[i]].c_str());
-            allCombinations.push_back(comb);
-            v[0] += 1; 
-        }
-
-        return allCombinations;
-}
 
 string string_from_vector(const vector<string> &pieces) {
     string s;
@@ -139,16 +115,6 @@ map<string, map<string,float>> calculateProbabilities(map<string, map<string,int
 
 
 
-void printCounter(map<string, map<string,int>> counter) {
-    for(auto& x : counter) {
-        cout << x.first << " - ";
-        cout << "[ ";
-        for(auto&& y: x.second)
-	        std::cout << y.first << ":" << y.second << " ";
-        cout << "]\n";
-    }
-}
-
 map<string, map<string,int>> initializeCounter (int k, vector<string> options, char *alphabet) {
     map<string, map<string,int>> counter;
     allLexicographic(alphabet);
@@ -159,7 +125,6 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
         for (int j = 0; j < k; ++j) {
             freqs[options.at(j)]=0;
         }
-        //cout << "-> " << permuts.at(i) << '\n';
 
         counter[permuts[i].substr(0,k-1)] = freqs;
 
@@ -184,6 +149,13 @@ int main(int argc, char *argv[])
     int k = atoi(argv[2]);
     int smoothing = atoi(argv[3]);
     string filename = argv[1];
+    vector<string> options;
+    for (int i = 0; i < strlen(alphabet); ++i) {
+        string s(1,alphabet[i]);
+        options.push_back(s);
+    }
+
+
 
 
     if (k > sizeof(alphabet)) {
@@ -192,10 +164,6 @@ int main(int argc, char *argv[])
     }
 
     string fileContent = readFile(filename);
-
-    vector<string> options = {"A","G","C","T"};
-    combination_with_repetiton(4,3,options);
-
     map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
 
     counter = countOccurrences(counter, fileContent, k, options);
