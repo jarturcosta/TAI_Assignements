@@ -3,13 +3,15 @@
 #include <vector> 
 #include <map>
 #include <cstring>
-#include "permutations.cpp"
+#include "combinations.cpp"
 #include <iomanip>
 
 using namespace std;
 
+// Global entropy of the model as a global variable
 float modelEntropy = 0.0;
 
+// Function that reads the file and returns the file content as a string
 string readFile(string filename) {
     string content = "";
     string line;
@@ -26,19 +28,20 @@ string readFile(string filename) {
     return content;
 }
 
-
+// Auxiliary function that constructs a string out of a vector of strings, concatenating them
 string string_from_vector(const vector<string> &pieces) {
     string s;
     for (const auto &piece : pieces) s += piece;
     return s;
 }
 
+// Function that counts the occurrences of each character that come after a specific context.
+// It populates the empty counter map that recieves as an argument and returns it.
 map<string, map<string,int>> countOccurrences(map<string, map<string,int>> counter, string content, int k, vector<string> alphabet) {
     char content_ch_array[content.length() + 1];
     strcpy(content_ch_array, content.c_str());
 
     for(int i = 0; i < content.length()-k+1; ++i) {
-
         vector<string> seq;
         for (int j = i; j < i+k; ++j) {
             string s(1,content_ch_array[j]);
@@ -54,9 +57,10 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
     return counter;
 }
 
-
+// Printing function for the probability counter
 void printCounterDouble(map<string, map<string,float>> counter) {
-    cout.precision(2);
+    std::cout << std::fixed;
+    std::cout << std::setprecision(2);
 
     for(auto& x : counter) {
         cout << x.first << " - ";
@@ -66,15 +70,15 @@ void printCounterDouble(map<string, map<string,float>> counter) {
             cnt++;
 	        cout << y.first << ":" << (float) y.second;
             if(cnt != x.second.size()) {
-                cout << "   \t";
-            } else {
-                cout << " ";
+                cout << "\t";
             }
         }
-        cout << "]\n";
+        cout << " ]\n";
     }
 }
 
+// Function that recieves the counter with occurences of each symbol in each context and calculates the probabilities of the events associated with it.
+// It also calculates the local entropies, prints them and updates the overall entropy of the calculated model 
 map<string, map<string,float>> calculateProbabilities(map<string, map<string,int>> counter, int smoothing)  {
     map<string, map<string,float>> probabilities;
     int overallSum = 0;
@@ -101,24 +105,25 @@ map<string, map<string,float>> calculateProbabilities(map<string, map<string,int
         }
         cout << seq.first << " - Local entropy: " << Hc << endl;
         float localProb = (float) sum/ (float) overallSum;
-        cout << seq.first << " - Local probability: " << localProb << endl;
 
         modelEntropy+=localProb*Hc;
 
     }
 	
-    //printCounterDouble(probabilities);
-
-
     return probabilities;
 }
 
 
-
+// Function that calculates all the combinations with repetitions given the alphabet and the order of the model
 map<string, map<string,int>> initializeCounter (int k, vector<string> options, char *alphabet) {
     map<string, map<string,int>> counter;
-    allLexicographic(alphabet);
-    vector<string> permuts = getPermutations();
+    char arr[k];
+    for (int i = 0; i < k; ++i) {
+        arr[i] = alphabet[i];
+    }
+    int n = sizeof(arr)/sizeof(arr[0]); 
+    int r = 3; 
+    vector<string> permuts = CombinationRepetition(arr,n,r);
 
     for(size_t i=0; i<permuts.size(); ++i){
         map<string,int> freqs;
@@ -133,10 +138,6 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
     return counter;
 }
 
-
-
-
-
 int main(int argc, char *argv[]) 
 {
     setw(2);
@@ -146,6 +147,8 @@ int main(int argc, char *argv[])
     
 
     char alphabet[] = "ACTG";
+    char alphabet2[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
     int k = atoi(argv[2]);
     int smoothing = atoi(argv[3]);
     string filename = argv[1];
@@ -155,23 +158,20 @@ int main(int argc, char *argv[])
         options.push_back(s);
     }
 
-
-
-
-    if (k > sizeof(alphabet)) {
+    if (k > strlen(alphabet)) {
         cout << "Order of the context can't be higher than the alphabet size!\n";
         return 1;
     }
 
     string fileContent = readFile(filename);
     map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
-
     counter = countOccurrences(counter, fileContent, k, options);
 
     cout << "Probabilities:" << endl;
     printCounterDouble(calculateProbabilities(counter,smoothing));
     cout << "Model entropy: " << (float) modelEntropy << endl;
-
+    
+    
 
 
     return 0;
