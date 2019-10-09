@@ -4,7 +4,9 @@
 #include <map>
 #include <cstring>
 #include "combinations.cpp"
+#include "generator.cpp"
 #include <iomanip>
+
 
 using namespace std;
 
@@ -27,6 +29,7 @@ string readFile(string filename) {
 
     return content;
 }
+
 
 // Auxiliary function that constructs a string out of a vector of strings, concatenating them
 string string_from_vector(const vector<string> &pieces) {
@@ -146,8 +149,8 @@ int main(int argc, char *argv[])
 
     
 
-    char alphabet[] = "ACTG";
-    char alphabet2[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    //char alphabet[] = "ACTG";
+    char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     int k = atoi(argv[2]);
     int smoothing = atoi(argv[3]);
@@ -168,11 +171,12 @@ int main(int argc, char *argv[])
     counter = countOccurrences(counter, fileContent, k, options);
 
     cout << "Probabilities:" << endl;
-    printCounterDouble(calculateProbabilities(counter,smoothing));
+    map<string, map<string, float>> probs = calculateProbabilities(counter,smoothing);
+    printCounterDouble(probs);
     cout << "Model entropy: " << (float) modelEntropy << endl;
     
-    
-
+    string genText = generateText(probs,1000, alphabet);
+    cout << "New text: " << genText << endl;
 
     return 0;
 }
