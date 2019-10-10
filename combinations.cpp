@@ -23,7 +23,8 @@ vector<string> CombinationRepetitionUtil(char chosen[], char arr[],
         for (int i = 0; i < r; i++) 
             seq[i] = arr[chosen[i]];
         string seq_string = seq;
-        seqs.push_back(seq_string);
+        cout << seq_string.substr(0,seq_string.length()-3) << endl;
+        seqs.push_back(seq_string.substr(0,seq_string.length()-3));
         return seqs; 
     } 
 
@@ -31,8 +32,35 @@ vector<string> CombinationRepetitionUtil(char chosen[], char arr[],
     { 
         chosen[index] = i; 
         CombinationRepetitionUtil(chosen, arr, index + 1, r, i, end); 
-    } 
+    }
+    
     return seqs;
+}
+
+template<typename V, typename Callable>
+void for_each_combination(V &v, size_t gp_sz, Callable f) {
+    V gp(gp_sz);
+    auto total_n = std::pow(v.size(), gp.size());
+    for (auto i = 0; i < total_n; ++i) {
+        auto n = i;
+        for (auto j = 0ul; j < gp.size(); ++j) {
+            gp[gp.size() - j - 1] = v[n % v.size()];
+            n /= v.size();
+        }
+        f(gp);
+    }
+}
+
+vector<string> combinations(vector<int> v) {
+    vector<string> out;
+    for_each_combination(v, v.size(), [&](std::vector<int> &gp) {
+        string seq;
+        for (auto c: gp)
+            //std::cout << char(c) << " ";
+            seq.push_back((char) c);
+        out.push_back(seq);
+    });
+    return out;
 }
 
 vector<string> CombinationRepetition(char arr[], int n, int r) 

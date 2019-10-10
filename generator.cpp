@@ -21,27 +21,27 @@ string genStartSegment(char alphabet[], int seqLen) {
     string out = "";
 
     for (int i = 0; i < seqLen-1; ++i) {
-        srand (time(NULL));
 
-        int random = rand() % seqLen;
-        out.push_back(alphabet[i]);
+        int random = rand() % strlen(alphabet);
+        out.push_back(alphabet[random]);
     }
 
     return out;
 }
 
-string generateText(map<string, map<string, float>> probabilities, int nLetters, char alphabet[]) {
-    string str2 = genStartSegment(alphabet, 4);
+string generateText(map<string, map<string, float>> probabilities, int nLetters, char alphabet[],int k) {
+    srand (time(NULL));
+
+    string str2 = genStartSegment(alphabet, k);
 
     map<string, map<string,float>>::iterator p;
-    srand (time(NULL));
 
 
     int i;
     for (i = 1; i <= nLetters; ++i)
     {   
 
-        string lastThreeLatters = (str2.substr( str2.length() - 3));
+        string lastThreeLatters = (str2.substr( str2.length() - k + 1));
 
         p = probabilities.find(lastThreeLatters);
 

@@ -54,7 +54,19 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
         string string_seq = string_from_vector(seq);
         string s2(1,string_seq.back());
 
+
+
         counter[string_seq.substr(0,k-1)][s2]++;
+        for(auto&& l: alphabet) {
+            // cout << l << " " << counter[string_seq.substr(0,k-1)].count(l) << endl;
+            if(counter[string_seq.substr(0,k-1)].count(l) == 0) {
+                // cout << "doesn't exist: " << counter[string_seq.substr(0,k-1)].count(l) << "in " << string_seq.substr(0,k-1) << endl;
+                counter[string_seq.substr(0,k-1)][l] = 0;
+
+            }
+        }
+        
+
     }
 
     return counter;
@@ -63,7 +75,7 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
 // Printing function for the probability counter
 void printCounterDouble(map<string, map<string,float>> counter) {
     std::cout << std::fixed;
-    std::cout << std::setprecision(2);
+    std::cout << std::setprecision(4);
 
     for(auto& x : counter) {
         cout << x.first << " - ";
@@ -72,6 +84,25 @@ void printCounterDouble(map<string, map<string,float>> counter) {
         for(auto&& y: x.second) {
             cnt++;
 	        cout << y.first << ":" << (float) y.second;
+            if(cnt != x.second.size()) {
+                cout << "\t";
+            }
+        }
+        cout << " ]\n";
+    }
+}
+
+void printCounter(map<string, map<string,int>> counter) {
+    std::cout << std::fixed;
+    std::cout << std::setprecision(4);
+
+    for(auto& x : counter) {
+        cout << x.first << " - ";
+        cout << "[ ";
+        int cnt = 0;
+        for(auto&& y: x.second) {
+            cnt++;
+	        cout << y.first << ":" << y.second;
             if(cnt != x.second.size()) {
                 cout << "\t";
             }
@@ -129,12 +160,14 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
     vector<string> permuts = CombinationRepetition(arr,n,r);
 
     for(size_t i=0; i<permuts.size(); ++i){
+        cout << ">>> " << permuts[i] << endl;
         map<string,int> freqs;
         for (int j = 0; j < k; ++j) {
             freqs[options.at(j)]=0;
         }
 
         counter[permuts[i].substr(0,k-1)] = freqs;
+
 
     }
 
@@ -143,14 +176,13 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
 
 int main(int argc, char *argv[]) 
 {
-    setw(2);
+    setw(3);
     setprecision(5);
-    cout.precision(2);
+    cout.precision(3);
 
     
 
-    //char alphabet[] = "ACTG";
-    char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    char alphabet[] = "ACTG";
 
     int k = atoi(argv[2]);
     int smoothing = atoi(argv[3]);
@@ -170,12 +202,13 @@ int main(int argc, char *argv[])
     map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
     counter = countOccurrences(counter, fileContent, k, options);
 
+
     cout << "Probabilities:" << endl;
     map<string, map<string, float>> probs = calculateProbabilities(counter,smoothing);
     printCounterDouble(probs);
     cout << "Model entropy: " << (float) modelEntropy << endl;
     
-    string genText = generateText(probs,1000, alphabet);
+    string genText = generateText(probs,1000, alphabet, k);
     cout << "New text: " << genText << endl;
 
     return 0;
