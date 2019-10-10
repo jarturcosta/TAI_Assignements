@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <vector> 
+#include <vector>
 #include <map>
 #include <cstring>
 #include "combinations.cpp"
@@ -65,7 +65,7 @@ map<string, map<string,int>> countOccurrences(map<string, map<string,int>> count
 
             }
         }
-        
+
 
     }
 
@@ -83,7 +83,7 @@ void printCounterDouble(map<string, map<string,float>> counter) {
         int cnt = 0;
         for(auto&& y: x.second) {
             cnt++;
-	        cout << y.first << ":" << (float) y.second;
+            cout << y.first << ":" << (float) y.second;
             if(cnt != x.second.size()) {
                 cout << "\t";
             }
@@ -102,7 +102,7 @@ void printCounter(map<string, map<string,int>> counter) {
         int cnt = 0;
         for(auto&& y: x.second) {
             cnt++;
-	        cout << y.first << ":" << y.second;
+            cout << y.first << ":" << y.second;
             if(cnt != x.second.size()) {
                 cout << "\t";
             }
@@ -111,8 +111,17 @@ void printCounter(map<string, map<string,int>> counter) {
     }
 }
 
+void saveProbsToFile(map<string, map<string, float>> probs){
+    std::ofstream statistics;
+    statistics.open ("prob_stats.csv");
+    statistics << "Combinations" << "," << "P(A|c)" << "," << "P(T|c)" << "," << "P(C|c)" << "," << "P(G|c)" << std::endl;
+    for(auto& c : probs) { for(auto&& e: c.second){ statistics << c.first << "," <<  e.first << "," <<  (float) e.second << std::endl;}
+    }
+}
+
+
 // Function that recieves the counter with occurences of each symbol in each context and calculates the probabilities of the events associated with it.
-// It also calculates the local entropies, prints them and updates the overall entropy of the calculated model 
+// It also calculates the local entropies, prints them and updates the overall entropy of the calculated model
 map<string, map<string,float>> calculateProbabilities(map<string, map<string,int>> counter, int smoothing)  {
     map<string, map<string,float>> probabilities;
     int overallSum = 0;
@@ -143,7 +152,7 @@ map<string, map<string,float>> calculateProbabilities(map<string, map<string,int
         modelEntropy+=localProb*Hc;
 
     }
-	
+
     return probabilities;
 }
 
@@ -155,8 +164,8 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
     for (int i = 0; i < k; ++i) {
         arr[i] = alphabet[i];
     }
-    int n = sizeof(arr)/sizeof(arr[0]); 
-    int r = 3; 
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int r = 3;
     vector<string> permuts = CombinationRepetition(arr,n,r);
 
     for(size_t i=0; i<permuts.size(); ++i){
@@ -174,16 +183,14 @@ map<string, map<string,int>> initializeCounter (int k, vector<string> options, c
     return counter;
 }
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     setw(3);
     setprecision(5);
     cout.precision(3);
 
-    
-
     char alphabet[] = "ACTG";
-
+    //char alphabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,. ";
     int k = atoi(argv[2]);
     int smoothing = atoi(argv[3]);
     string filename = argv[1];
@@ -206,8 +213,10 @@ int main(int argc, char *argv[])
     cout << "Probabilities:" << endl;
     map<string, map<string, float>> probs = calculateProbabilities(counter,smoothing);
     printCounterDouble(probs);
+    saveProbsToFile(probs);
+
     cout << "Model entropy: " << (float) modelEntropy << endl;
-    
+
     string genText = generateText(probs,1000, alphabet, k);
     cout << "New text: " << genText << endl;
 
