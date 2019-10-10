@@ -114,7 +114,7 @@ void printCounter(map<string, map<string,int>> counter) {
 void saveProbsToFile(map<string, map<string, float>> probs){
     std::ofstream statistics;
     statistics.open ("prob_stats.csv");
-    statistics << "Combinations" << "," << "P(A|c)" << "," << "P(T|c)" << "," << "P(C|c)" << "," << "P(G|c)" << std::endl;
+    statistics << "Combinations" << "," << "e" << "," << "P(e|c)"<< std::endl;
     for(auto& c : probs) { for(auto&& e: c.second){ statistics << c.first << "," <<  e.first << "," <<  (float) e.second << std::endl;}
     }
 }
