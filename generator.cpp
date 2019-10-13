@@ -29,8 +29,7 @@ string genStartSegment(char alphabet[], int seqLen) {
     return out;
 }
 
-string generateText(map<string, map<string, float>> probabilities, int nLetters, char alphabet[],int k) {
-    srand (time(NULL));
+string generateText(map<string, map<string, float>> probabilities, int nLetters, char alphabet[],int k, int smoothing) {
 
     string str2 = genStartSegment(alphabet, k);
 
@@ -38,19 +37,31 @@ string generateText(map<string, map<string, float>> probabilities, int nLetters,
 
 
     int i;
-    for (i = 1; i <= nLetters; ++i)
+    for (i = k; i <= nLetters; ++i)
     {   
 
         string lastThreeLatters = (str2.substr( str2.length() - k + 1));
 
         p = probabilities.find(lastThreeLatters);
 
-
         /* generate secret number between 1 and 10: */
         float random = (rand() % 100);
 
         
         float prob;
+
+        if(probabilities.count(lastThreeLatters) == 0) {
+            for(int j = 0; j < strlen(alphabet); ++j) {
+                string s(1,alphabet[j]);
+                float x = smoothing;
+                float y = smoothing*k;
+                float prob = (float)x/(float)y;
+                probabilities[lastThreeLatters][s] = prob;
+            }
+
+        }
+
+
 
         for(auto& x : probabilities) {
             if (x.first == lastThreeLatters){

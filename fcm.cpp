@@ -40,7 +40,9 @@ string string_from_vector(const vector<string> &pieces) {
 
 // Function that counts the occurrences of each character that come after a specific context.
 // It populates the empty counter map that recieves as an argument and returns it.
-map<string, map<string,int>> countOccurrences(map<string, map<string,int>> counter, string content, int k, vector<string> alphabet) {
+map<string, map<string,int>> countOccurrences(string content, int k, vector<string> alphabet) {
+    map<string, map<string,int>> counter;
+
     char content_ch_array[content.length() + 1];
     strcpy(content_ch_array, content.c_str());
 
@@ -137,7 +139,7 @@ map<string, map<string,float>> calculateProbabilities(map<string, map<string,int
             probabilities[seq.first][freq.first] = prob;
             Hc+=bits;
         }
-        cout << seq.first << " - Local entropy: " << Hc << endl;
+        //cout << seq.first << " - Local entropy: " << Hc << endl;
         float localProb = (float) sum/ (float) overallSum;
 
         modelEntropy+=localProb*Hc;
@@ -179,37 +181,64 @@ int main(int argc, char *argv[])
     setw(3);
     setprecision(5);
     cout.precision(3);
+    srand (time(NULL));
+
 
     
 
     char alphabet[] = "ACTG";
-
-    int k = atoi(argv[2]);
-    int smoothing = atoi(argv[3]);
-    string filename = argv[1];
     vector<string> options;
     for (int i = 0; i < strlen(alphabet); ++i) {
         string s(1,alphabet[i]);
         options.push_back(s);
     }
+    int count = 0; 
+    while(argv[++count] != NULL);
+    cout << "-> " << count << endl; 
 
-    if (k > strlen(alphabet)) {
-        cout << "Order of the context can't be higher than the alphabet size!\n";
-        return 1;
+    if(count > 2) {
+        int k = atoi(argv[2]);
+        int smoothing = atoi(argv[3]);
+        string filename = argv[1];
+
+
+        string fileContent = readFile(filename);
+        map<string, map<string, int>> counter = countOccurrences(fileContent, k, options);
+
+
+        cout << "Probabilities:" << endl;
+        map<string, map<string, float>> probs = calculateProbabilities(counter,smoothing);
+        printCounterDouble(probs);
+        cout << "Model entropy: " << (float) modelEntropy << endl;
+
+        string genText = generateText(probs,1000, alphabet, k, smoothing);
+        cout << "New text: " << genText << endl;
+    } else {
+        string fileContent = readFile("genes.txt");
+        for (int k = 1; k < 10;++k) {
+            cout << "Context order = " << k << endl;
+            map<string, map<string, int>> counter = countOccurrences(fileContent, k, options);
+            for (int alpha = 1; alpha < 10;++alpha) {
+                cout << "\tSmoothing = " << alpha << endl;
+                map<string, map<string, float>> probs = calculateProbabilities(counter,alpha);
+                // if (k == 9 && alpha == 9) {
+                //     printCounterDouble(probs);
+
+                // }
+                cout << "\tModel entropy: " << (float) modelEntropy << endl;
+                modelEntropy = 0.0;
+                string genText = generateText(probs,1000, alphabet, k, alpha);
+                cout << "\tNew text: " << genText << endl;
+                
+            }
+
+        }
+        
     }
 
-    string fileContent = readFile(filename);
-    map<string, map<string,int>> counter = initializeCounter(4,options,alphabet);
-    counter = countOccurrences(counter, fileContent, k, options);
-
-
-    cout << "Probabilities:" << endl;
-    map<string, map<string, float>> probs = calculateProbabilities(counter,smoothing);
-    printCounterDouble(probs);
-    cout << "Model entropy: " << (float) modelEntropy << endl;
     
-    string genText = generateText(probs,1000, alphabet, k);
-    cout << "New text: " << genText << endl;
+
+    
 
     return 0;
 }
