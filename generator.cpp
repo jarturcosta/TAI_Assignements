@@ -7,16 +7,6 @@
 
 using namespace std;
 
-
-string getLastThreeChars(char str[]){
-    int len;
-    char* pos; //position of last 3 chars
-    len=strlen(str); // save length of string
-    pos=str+len-3; // make pos point to last char of string
-
-    return pos;
-}
-
 string genStartSegment(char alphabet[], int seqLen) {
     string out = "";
 
@@ -44,7 +34,6 @@ string generateText(map<string, map<string, float>> probabilities, int nLetters,
 
         p = probabilities.find(lastThreeLatters);
 
-        /* generate secret number between 1 and 10: */
         float random = (rand() % 100);
 
         
