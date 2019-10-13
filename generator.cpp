@@ -40,9 +40,9 @@ string generateText(map<string, map<string, float>> probabilities, int nLetters,
     for (i = k; i <= nLetters; ++i)
     {   
 
-        string lastThreeLatters = (str2.substr( str2.length() - k + 1));
+        string lastKLetters = (str2.substr( str2.length() - k + 1));
 
-        p = probabilities.find(lastThreeLatters);
+        p = probabilities.find(lastKLetters);
 
         /* generate secret number between 1 and 10: */
         float random = (rand() % 100);
@@ -50,13 +50,13 @@ string generateText(map<string, map<string, float>> probabilities, int nLetters,
         
         float prob;
 
-        if(probabilities.count(lastThreeLatters) == 0) {
+        if(probabilities.count(lastKLetters) == 0) {
             for(int j = 0; j < strlen(alphabet); ++j) {
                 string s(1,alphabet[j]);
                 float x = smoothing;
                 float y = smoothing*k;
                 float prob = (float)x/(float)y;
-                probabilities[lastThreeLatters][s] = prob;
+                probabilities[lastKLetters][s] = prob;
             }
 
         }
@@ -64,7 +64,7 @@ string generateText(map<string, map<string, float>> probabilities, int nLetters,
 
 
         for(auto& x : probabilities) {
-            if (x.first == lastThreeLatters){
+            if (x.first == lastKLetters){
                 prob = 0;
                 for(auto&& y: x.second){
                     prob = prob + (y.second * 100);
