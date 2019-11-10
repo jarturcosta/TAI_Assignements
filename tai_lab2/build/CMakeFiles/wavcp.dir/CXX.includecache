@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a2/wavcp.cpp
+iostream
+-
+vector
+-
+sndfile.hh
+-
+
