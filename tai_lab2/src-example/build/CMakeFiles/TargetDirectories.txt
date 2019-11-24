@@ -1,0 +1,8 @@
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/edit_cache.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavhist.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavcp.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/rebuild_cache.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavquant.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavfind.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavcb.dir
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/build/CMakeFiles/wavcmp.dir

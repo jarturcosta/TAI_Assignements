@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavquant.cpp
+cstdlib
+-
+wavquant.h
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavquant.h
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavquant.h
+iostream
+-
+vector
+-
+map
+-
+cmath
+-
+math.h
+-
+sndfile.hh
+-
+

@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavcmp.cpp
+cstdlib
+-
+iostream
+-
+vector
+-
+sndfile.hh
+-
+wavquant.h
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavquant.h
+wavcmp.h
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavcmp.h
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavcmp.h
+vector
+-
+math.h
+-
+iostream
+-
+
+/home/jarturcosta/Documents/Mestrado/TAI/tai_a1/tai_lab2/src-example/wavquant.h
+iostream
+-
+vector
+-
+map
+-
+cmath
+-
+math.h
+-
+sndfile.hh
+-
+

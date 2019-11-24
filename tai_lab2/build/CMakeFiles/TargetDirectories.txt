@@ -1,4 +1,0 @@
-/home/jarturcosta/Documents/Mestrado/TAI/tai_a2/build/CMakeFiles/edit_cache.dir
-/home/jarturcosta/Documents/Mestrado/TAI/tai_a2/build/CMakeFiles/rebuild_cache.dir
-/home/jarturcosta/Documents/Mestrado/TAI/tai_a2/build/CMakeFiles/wavcp.dir
-/home/jarturcosta/Documents/Mestrado/TAI/tai_a2/build/CMakeFiles/wavhist.dir
