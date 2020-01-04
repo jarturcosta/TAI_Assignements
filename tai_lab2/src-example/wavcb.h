@@ -135,7 +135,8 @@ public:
         
 
         for (unsigned int i = 0; i < sample_blocks.size(); i++) {
-            //std::cout << "Iter " << i << "/" << sample_blocks.size() << endl;
+            std::cout << "Iter " << i << "/" << sample_blocks.size() << endl;
+
             double min_d = 0.0;
             pair<vector<double>, vector<double>> closest_to_mean;
             int mutex = 1;

@@ -32,7 +32,7 @@ class WAVfind {
         void compare_codebooks(string filename) {
             SndfileHandle sndFileIn{filename};
 
-            WAVcb cb {sndFileIn, 50, 2, 20, 3};
+            WAVcb cb {sndFileIn, 2, 2, 2, 1};
             
             map<string, vector<vector<double>>> codebook_and_means;
             codebook_and_means = get_codebook_means();
@@ -43,9 +43,23 @@ class WAVfind {
             cout << "Escrita do codebook" << endl;
             cb.write_codebook("codebook_to_find.csv", centroids);
             
-            int index = 0;
-            for(auto&& e: codebook_and_means[filename]) {
-                index++;
+            
+            map<string,double> scores;
+            for(auto& pair : codebook_and_means) {
+                int index_X = 0;
+                double diffSum = 0.0;
+                for(auto&& centroid : pair.second) {
+                    index_X++;
+                    int index_Y=0;
+                    for (auto&& e:centroid) {
+                        index_Y++;
+                        diffSum+=abs((double)e-(double)centroids[index_X][index_Y]);
+                    }
+                    cout << "diffSum (" << pair.first << ", centroid=" << index_X << ") = " << diffSum << endl;;
+                }
+                cout << "Total diffsum = " << diffSum << endl;
+                scores[pair.first]=diffSum;
+
                 
             }
             
