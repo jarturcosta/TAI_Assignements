@@ -4,4 +4,6 @@ To build:
 To test:
 	../bin-example/wavcp sample.wav copy.wav // copies "sample.wav" into "copy.wav"
 	../bin-example/wavhist sample.wav 0 // outputs the histogram of channel 0 (left)
-
+    ../bin-example/wavquant sample2.wav sample.wav 8 // makes a quantized copy of sample.wav with the variable q=8
+    ../bin-example/wavcb sample.wav 2 10 4 1 // arguments in order: <filename  block_size  overlap_factor  cluster_number  iterations> -> will make te codebook of sample.wav with the inserted parameters
+    ../bin-example/wavfind sample02.wav // will return the most probable codebook for the given sampre
