@@ -33,8 +33,8 @@ if len(sys.argv) > 1:
                 sys.exit()
         elif arg == "-s":
             ref_size = int(sys.argv[i+1])
-            if ref_size < 0 or ref_size > 9:
-                print("Only reference sizes between 1 and 9!",i)
+            if ref_size < 1 or ref_size > 9:
+                print("Only reference sizes between 2 and 9!",i)
                 print(usage)
                 sys.exit()
         else:
@@ -137,7 +137,7 @@ for s in range(1,41):
         ref_match = min(scores.items(), key=operator.itemgetter(1))[0]                  # Selecting the subject with best score by choosing the one with the lesser value (closer to 0 means proximity)
         if ref_match == s:
             n_correct_matches+=1                                                        # Counting correct matches
-        r+=("s"+str(s).zfill(2) + "/" + str(s).zfill(2) + " -> " + str(s).zfill(2)) 
+        r+=("s"+str(s).zfill(2) + "/" + str(f).zfill(2) + " -> " + str(n_correct_matches).zfill(2)) 
         if f != 10:
             r+="; "
     print(r+"\tCorrect Matches = "+str(n_correct_matches))
